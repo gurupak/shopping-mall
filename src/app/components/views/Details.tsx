@@ -51,6 +51,7 @@ const Details: FC<{ productItem: oneProductType }> = ({ productItem }) => {
     dispatch({ payload: "addToCart", data: dataToAdd });
     notifiction();
   }
+  
   return (
     <div className="flex flex-col">
       <Toaster />
@@ -172,7 +173,7 @@ const Details: FC<{ productItem: oneProductType }> = ({ productItem }) => {
           <div className="flex flex-[2] flex-col">
             {
               <PortableText
-                value={productItem.productcare}
+                value={productItem.productcare as any}
                 components={components}
               />
             }
