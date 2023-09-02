@@ -20,19 +20,16 @@ async function fetchAllProducts() {
 
 export default async function Home() {
   // let { result }:responseType = await fetchAllProducts();
-  // let {message}:responseType = await fetchAllProducts();
-  let {message}:any = await fetchAllProducts();
+  let {message}:responseType = await fetchAllProducts();
+  // let {message}:any = await fetchAllProducts();
   // console.log('data:', message); 
   return (
     <div>
-      {/* <Hero />
+      <Hero />
       <ProductType />
       <ProductCarousel ProductData={message} />
       <Vintage />
-      <Newsletter /> */}
-      {/* {message.map((item: oneProductType) => item.productName)}   */}
-      {message}
-      {`${BAST_PATH_API}/api/products`}
+      <Newsletter />      
     </div>
   );
 }

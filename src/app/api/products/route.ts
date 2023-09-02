@@ -3,7 +3,7 @@ import { client } from "../../../../sanity/lib/client";
 import { oneProductType } from "@/app/components/utils/SanityDataandTypes";
 
 export async function GET(request: NextRequest) {
-  return NextResponse.json({ message: "here" });
+  // return NextResponse.json({ message: "here" });
   const sanityData: Array<oneProductType> = [];
   const url = request.nextUrl.searchParams;
   try {
