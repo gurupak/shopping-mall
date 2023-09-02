@@ -19,14 +19,14 @@ async function fetchAllProducts() {
 export default async function Home() {
   // let { result }:responseType = await fetchAllProducts();
   let {message}:responseType = await fetchAllProducts();
-  // console.log('msg', message); 
+  console.log('data:', message); 
   return (
     <div>
-      <Hero />
+      {/* <Hero />
       <ProductType />
       <ProductCarousel ProductData={message} />
       <Vintage />
-      <Newsletter />
+      <Newsletter /> */}      
     </div>
   );
 }
