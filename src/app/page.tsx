@@ -31,7 +31,8 @@ export default async function Home() {
       <Vintage />
       <Newsletter /> */}
       {/* {message.map((item: oneProductType) => item.productName)}   */}
-      {message}      
+      {message}
+      {`${BAST_PATH_API}/api/products`}
     </div>
   );
 }
