@@ -2,7 +2,7 @@ import Image from "next/image";
 import Hero from "./components/views/Hero";
 import ProductType from "./components/views/ProductTypes";
 import BAST_PATH_API from "./components/shared/BasePath";
-import { responseType } from "./components/utils/SanityDataandTypes";
+import { oneProductType, responseType } from "./components/utils/SanityDataandTypes";
 import ProductCarousel from "./components/views/ProductCarousel";
 import Vintage from "./components/views/Vintage";
 import Newsletter from "./components/views/Newsletter";
@@ -27,7 +27,7 @@ export default async function Home() {
       <ProductCarousel ProductData={message} />
       <Vintage />
       <Newsletter /> */}    
-      {BAST_PATH_API}  
+      {message.map((item: oneProductType) => item.productName)}  
     </div>
   );
 }
