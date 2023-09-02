@@ -15,7 +15,7 @@ const RegisterPage = () => {
   const router = useRouter();
 
   // Form Submit
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     if (!isLoaded) {
@@ -42,7 +42,7 @@ const RegisterPage = () => {
   };
 
   // Verify User Email Code
-  const onPressVerify = async (e) => {
+  const onPressVerify = async (e:any ) => {
     e.preventDefault();
     if (!isLoaded) {
       return;
