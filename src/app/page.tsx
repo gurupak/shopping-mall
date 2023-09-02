@@ -27,7 +27,8 @@ export default async function Home() {
       <ProductCarousel ProductData={message} />
       <Vintage />
       <Newsletter /> */}    
-      {message.map((item: oneProductType) => item.productName)}  
+      {/* {message.map((item: oneProductType) => item.productName)}   */}
+      {typeof(message)}
     </div>
   );
 }
