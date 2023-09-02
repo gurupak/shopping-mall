@@ -9,26 +9,29 @@ import Newsletter from "./components/views/Newsletter";
 import Footer from "./components/views/Footer";
 
 async function fetchAllProducts() {
+
   const data = await fetch(`${BAST_PATH_API}/api/products`);
   if (!data.ok) {
     throw new Error("Failed to fetch");
   }
+  console.log(`${BAST_PATH_API}/api/products`);
   return data.json();
 }
 
 export default async function Home() {
   // let { result }:responseType = await fetchAllProducts();
-  let {message}:responseType = await fetchAllProducts();
-  console.log('data:', message); 
+  // let {message}:responseType = await fetchAllProducts();
+  let {message}:any = await fetchAllProducts();
+  // console.log('data:', message); 
   return (
     <div>
       {/* <Hero />
       <ProductType />
       <ProductCarousel ProductData={message} />
       <Vintage />
-      <Newsletter /> */}    
+      <Newsletter /> */}
       {/* {message.map((item: oneProductType) => item.productName)}   */}
-      {typeof(message)}
+      {message}      
     </div>
   );
 }
