@@ -3,9 +3,8 @@ import { client } from "../../../../sanity/lib/client";
 import { oneProductType } from "@/app/components/utils/SanityDataandTypes";
 
 export async function GET(request: NextRequest) {
-  // return NextResponse.json({ message: "here" });
   const sanityData: Array<oneProductType> = [];
-  const url = request.nextUrl.searchParams;
+  const url = request.nextUrl.searchParams; 
   try {
     let prodtype: any = "";
     if (url.has("type")) {
@@ -51,8 +50,8 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ arrProduct: "Not found" });
       }
     }
-    return NextResponse.json({ sanityData });
-    // console.log(response)
+    // console.log(sanityData);
+    // return NextResponse.json({ sanityData });
     return NextResponse.json({ message: response });
   } catch (error) {
     console.log("error", (error as { message: string }).message);
