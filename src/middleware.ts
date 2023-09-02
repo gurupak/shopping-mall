@@ -16,6 +16,8 @@ export default authMiddleware({
     "/details/(.*?)",
     "/products",
     "/register",
+    "/search",
+    "/search/(.*?)",
   ],
   ignoredRoutes: ["/api/products", "/regiter"],
 });
