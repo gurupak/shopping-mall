@@ -9,12 +9,15 @@ export default authMiddleware({
     "/product/female",
     "/product/male",
     "/product/kids",
+    "/product/female/(.*?)",
+    "/product/male/(.*?)",
+    "/product/kids/(.*?)",
     "/cart",
     "/details/(.*?)",
     "/products",
-    "/register"
+    "/register",
   ],
-  ignoredRoutes: [ "/api/products", '/regiter'],
+  ignoredRoutes: ["/api/products", "/regiter"],
 });
 
 export const config = {

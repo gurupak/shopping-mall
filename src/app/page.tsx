@@ -26,7 +26,8 @@ export default async function Home() {
       <ProductType />
       <ProductCarousel ProductData={message} />
       <Vintage />
-      <Newsletter /> */}      
+      <Newsletter /> */}    
+      {BAST_PATH_API}  
     </div>
   );
 }
