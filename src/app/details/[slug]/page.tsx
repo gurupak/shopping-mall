@@ -19,18 +19,18 @@ export async function generateMetadata({params}: {params: {slug: string}}){
   }
 }
 
+//stopping for vercel
+// export async function generateStaticParams(){
+//   let res:any = await fetch(
+//     `${BAST_PATH_API}/api/products?start=0&end=10`
+//   ).then((res:any) => res.json())
+//     // console.log(res.arrProduct);
+//   let allData = res.arrProduct.map((item: oneProductType) => {
+//     slug: item.slug;
+//   });
+//   return allData;
 
-export async function generateStaticParams(){
-  let res:any = await fetch(
-    `${BAST_PATH_API}/api/products?start=0&end=10`
-  ).then((res:any) => res.json())
-    // console.log(res.arrProduct);
-  let allData = res.arrProduct.map((item: oneProductType) => {
-    slug: item.slug;
-  });
-  return allData;
-
-}
+// }
 
 async function fetchPreviewData(slug: string) {
   let res = await fetch(
