@@ -1,0 +1,6 @@
+import __vite__cjsImport0_react from "/node_modules/.vite/deps/react.js?v=f51680bf"; const React = __vite__cjsImport0_react.__esModule ? __vite__cjsImport0_react.default : __vite__cjsImport0_react;
+import __vite__cjsImport1_reactDom from "/node_modules/.vite/deps/react-dom.js?v=f51680bf"; const ReactDOM = __vite__cjsImport1_reactDom.__esModule ? __vite__cjsImport1_reactDom.default : __vite__cjsImport1_reactDom;
+import App from "/src/App.jsx";
+ReactDOM.render(/* @__PURE__ */ React.createElement(App, null), document.getElementById("app"));
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIm1haW4uanN4Il0sInNvdXJjZXNDb250ZW50IjpbIlxuaW1wb3J0IFJlYWN0IGZyb20gXCJyZWFjdFwiO1xuaW1wb3J0IFJlYWN0RE9NIGZyb20gXCJyZWFjdC1kb21cIjtcblxuaW1wb3J0IEFwcCBmcm9tIFwiLi9BcHAuanN4XCI7XG5cblJlYWN0RE9NLnJlbmRlcig8QXBwIC8+LCBkb2N1bWVudC5nZXRFbGVtZW50QnlJZChcImFwcFwiKSk7XG4gICAgIl0sIm1hcHBpbmdzIjoiQUFDQSxPQUFPLFdBQVc7QUFDbEIsT0FBTyxjQUFjO0FBRXJCLE9BQU8sU0FBUztBQUVoQixTQUFTLE9BQU8sb0NBQUMsU0FBSSxHQUFJLFNBQVMsZUFBZSxLQUFLLENBQUM7IiwibmFtZXMiOltdfQ==
