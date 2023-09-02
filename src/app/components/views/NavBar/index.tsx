@@ -14,10 +14,11 @@ import { useContext } from "react";
 import ContextWrapper, { ctxCart } from "@/context/context";
 import CartState from "../SubComponents/CartState";
 import { UserButton } from "@clerk/nextjs";
+import { SignedInAuthObject, SignedOutAuthObject } from "@clerk/nextjs/server";
 
-const Navbar = () => {
+const Navbar = ({ userData }: {userData: string | null}) => {
   const router = useRouter();
-  const contextCart = useContext(ctxCart);
+  const contextCart = useContext(ctxCart);  
   // const qty = contextCart.cart.map()
   const [searchText, setSearchText] = useState("");
   const [isNavbarOpen, setNavbarOpen] = useState<boolean>(false);  
@@ -81,7 +82,12 @@ const Navbar = () => {
               />
             </div>
             <CartState />
-            <div><UserButton afterSignOutUrl="/" /></div>
+            <div className="flex flex-col items-center justify-center space-y-1">
+              <UserButton afterSignOutUrl="/" />
+              {userData && <Link href={"/profile"}>
+                <p>Profile</p>
+              </Link>}
+            </div>
           </div>
           <div
             className="cursor-pointer"
