@@ -18,10 +18,23 @@ export default authMiddleware({
     "/register",
     "/search",
     "/search/(.*?)",
+
+    "/stripe_session",
   ],
-  ignoredRoutes: ["/api/products", "/regiter"],
+  ignoredRoutes: [
+    "/api/stripe_session",
+    "/api/products",
+    "/api/cartfunc",
+    "/regiter",
+    "/sanity",
+  ],
 });
 
 export const config = {
-  matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)", "/checkout"],
+  matcher: [
+    "/((?!.*\\..*|_next).*)",
+    "/",
+    "/(api|trpc)(.*)",
+    "/checkout",    
+  ],
 };

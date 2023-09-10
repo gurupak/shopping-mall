@@ -8,6 +8,7 @@ import { RiDeleteBinLine } from "react-icons/ri";
 import ImageUrlBuilder from "@sanity/image-url";
 import { client } from "../../../../../../sanity/lib/client";
 import Link from "next/link";
+import products from "../../../../../../sanity/products";
 
 const builder = ImageUrlBuilder(client);
 const makeImgUrl = (srcUrl: any): any => {
@@ -23,122 +24,156 @@ const makeImgUrl = (srcUrl: any): any => {
 
 const CartChild = () => {
   //   let allProducts = fetchAllProducts();
-  const { state, dispatch } = useContext(ctxCart);
+  const { cartArray, dispatch } = useContext(ctxCart);
   const [allProductsCart, setAllProductsCart] = useState<Array<any>>([]);
   const [totalPrice, setTotalPrice] = useState(0);
 
+  // console.log(cartArray);
   useEffect(() => {
     const fetchAllProducts = async () => {
-      let res: any = await fetch(
-        `${BAST_PATH_API}/api/products?start=0&end=10`
-      ).then((res: any) => res.json());
+      let res: any = await fetch(`${BAST_PATH_API}/api/products`).then(
+        (res: any) => res.json()
+      );
 
-      //   console.log(res);
+      // console.log(res);
       let itemsToAdd: any = [];
       let itemPrice: number = 0;
-      state?.cart.forEach(
-        (element: { productId: string; quantity: number }) => {
-          for (let index = 0; index < res.arrProduct.length; index++) {
-            let item = res.arrProduct[index];
-            // item.quantity = element.quantity;
-            if (item._id === element.productId) {
-              itemsToAdd.push(item);
-              itemPrice = itemPrice + item.price * element.quantity;
+      cartArray?.forEach((element: any) => {
+        for (let index = 0; index < res.message.length; index++) {
+          let item = res.message[index];
+          // item.quantity = element.quantity;
+          if (element["cart-products"] !== null) {
+            if (item._id === element["cart-products"].productUuid) {
+              itemsToAdd.push({
+                ...item,
+                cartid: element["cart-products"].id as number,
+              });
+              itemPrice =
+                itemPrice + item.price * element["cart-products"].quantity;
               // console.log('added', item);
             }
           }
-          setAllProductsCart(itemsToAdd);
-          setTotalPrice(itemPrice);
         }
-      );
-      console.log(state?.cart.length)
-      if (state?.cart.length === 0) {
+        // console.log('price',itemPrice);
+        setAllProductsCart(itemsToAdd);
+        setTotalPrice(itemPrice);
+      });
+      // console.log(cartArray?.length);
+      if (cartArray?.length === 0) {
         setAllProductsCart([]);
         setTotalPrice(0);
       }
     };
     fetchAllProducts();
-  }, [state.cart]);
+  }, [cartArray]);
 
   //   console.log(allProductsCart);
-  function getQty(id: string) {
+  function getQty(id: string, cartid: any) {
     let qty = 0;
-    state?.cart.forEach((element: { productId: string; quantity: number }) => {
-      if (element.productId === id) {
-        qty = element.quantity;
-      }
-    });
+    if (cartArray.length > 0) {
+      cartArray?.forEach((item: any) => {
+        if (item["cart-products"] !== null) {
+          if (
+            item["cart-products"].productUuid === id &&
+            item["cart-products"].id === cartid
+          ) {
+            qty = item["cart-products"].quantity;
+          }
+        }
+      });
+    }
     return qty;
   }
   function getTotalQty() {
     let qty = 0;
-    state?.cart.forEach((element: { productId: string; quantity: number }) => {
-      qty = qty + element.quantity;
-    });
+    // console.log(cartArray);
+    if (cartArray.length > 0) {
+      cartArray?.forEach((item: any) => {
+        if (item["cart-products"] !== null) {
+          qty = qty + item["cart-products"].quantity;
+        }
+      });
+    }
     return qty;
   }
 
-  function deleteCartProduct(id: string) {
-    const revisedCart = setNewCartAndCookie(id);
+  function deleteCartProduct(id: string, cartid: number | undefined) {
+    const revisedCart = setNewCartAndCookie(id, undefined, cartid);
     setAllProductsCart(revisedCart);
   }
-  function setNewCartAndCookie(id: string, qty?: number) {
+  function setNewCartAndCookie(id: string, qty?: number, cartid?: number) {
     const revisedCart = allProductsCart.filter(
       (item: oneProductType) => item._id !== id
     );
     let dataToAdd = {
       productId: id,
       quantity: qty,
+      cartid: cartid,
     };
-    dispatch({ payload: "removeFromCart", data: dataToAdd });
+    dispatch("removeFromCart", dataToAdd);
     return revisedCart;
   }
-  function decreaseCartProduct(id: string, qty: number) {
+  function decreaseCartProduct(id: string, qty: number, cartid?: number) {
     let revisedCart: any = [];
-    console.log(qty)
+    // console.log(qty);
     if (qty - 1 === 0) {
       // revisedCart = setNewCartAndCookie(id);
-      // setAllProductsCart(revisedCart);       
+      // setAllProductsCart(revisedCart);
       // setTotalPrice(0);
       let dataToAdd = {
         productId: id,
-        quantity: qty,        
+        quantity: qty,
+        cartid: cartid,
       };
-      dispatch({ payload: "removeFromCart", data: dataToAdd }); 
+      dispatch("removeFromCart", dataToAdd);
       setTotalPrice(0);
-      return 
+      return;
     }
-    for (let index = 0; index < state?.cart.length; index++) {
-        const element = state?.cart[index];               
-        if(element.productId === id){            
-            // element.quantity = element.quantity - 1;   
-            let dataToAdd = {
-              productId: id,
-              quantity: element.quantity,
-              increase: false,
-            };
-            dispatch({payload: 'updateCart', data: dataToAdd })         
-        }        
+    for (let index = 0; index < cartArray?.length; index++) {
+      const element = cartArray[index];
+      // console.log(id);
+      if (element["cart-products"].productUuid === id) {
+        // element.quantity = element.quantity - 1;
+        let dataToAdd = {
+          uuid: id,
+          price: element["cart-products"].price,
+          quantity: element["cart-products"].quantity,
+          increase: false,
+          cartid: cartid,
+        };
+        // console.log(dataToAdd)
+        dispatch("updateCart", dataToAdd);
+      }
     }
   }
-  function increaseCartProduct(id: string, qty: number) {
+  function increaseCartProduct(id: string, qty: number, cartid?: number) {
     let revisedCart: any = [];
     // console.log(allProductsCart);
     let itemMaxQty = 0;
     for (const i of allProductsCart) {
       if (i._id === id) {
-        itemMaxQty = i.quantity
+        itemMaxQty = i.quantity;
       }
     }
-    console.log(itemMaxQty);
+    // console.log(itemMaxQty);
     if (qty < itemMaxQty) {
-      let dataToAdd = {
-        productId: id,
-        quantity: qty,
-        increase: true,
-      };
-      dispatch({ payload: "updateCart", data: dataToAdd });
-    }    
+      for (let index = 0; index < cartArray?.length; index++) {
+        const element = cartArray[index];
+        // console.log(id);
+        if (element["cart-products"].productUuid === id) {
+          // element.quantity = element.quantity - 1;
+          let dataToAdd = {
+            uuid: id,
+            price: element["cart-products"].price,
+            quantity: element["cart-products"].quantity,
+            increase: true,
+            cartid: cartid,
+          };
+          // console.log(dataToAdd)
+          dispatch("updateCart", dataToAdd);
+        }
+      }
+    }
   }
 
   return (
@@ -148,7 +183,7 @@ const CartChild = () => {
       </div>
       <div className="flex gap-6 flex-col lg:flex-row">
         <div className="flex flex-col gap-10 basis-3/4 ">
-          {allProductsCart.length > 0 &&
+          {allProductsCart.length > 0 ?
             allProductsCart?.map((item: oneProductType, index: number) => (
               <div key={index} className="flex gap-6 flex-col sm:flex-row">
                 <div className="w-72">
@@ -166,7 +201,7 @@ const CartChild = () => {
                       {item.productName}
                     </h2>
                     <div
-                      onClick={() => deleteCartProduct(item._id)}
+                      onClick={() => deleteCartProduct(item._id, item.cartid)}
                       className="cursor-pointer"
                     >
                       <RiDeleteBinLine size={28} />
@@ -187,18 +222,26 @@ const CartChild = () => {
                       <div
                         className="select-none cursor-pointer  w-8 h-8 rounded-full bg-gray-200 text-center text-xl"
                         onClick={() =>
-                          decreaseCartProduct(item._id, getQty(item._id))
+                          decreaseCartProduct(
+                            item._id,
+                            getQty(item._id, item.cartid),
+                            item.cartid
+                          )
                         }
                       >
                         -
                       </div>
                       <div className="w-8 p-2 text-lg  text-center">
-                        {getQty(item._id)}
+                        {getQty(item._id, item.cartid)}
                       </div>
                       <div
                         className="select-none cursor-pointer w-8 h-8 border rounded-full text-center text-xl"
                         onClick={() =>
-                          increaseCartProduct(item._id, getQty(item._id))
+                          increaseCartProduct(
+                            item._id,
+                            getQty(item._id, item.cartid),
+                            item.cartid
+                          )
                         }
                       >
                         +
@@ -208,7 +251,7 @@ const CartChild = () => {
                   </div>
                 </div>
               </div>
-            ))}
+            )): <div>Shopping Cart Empty</div>}
         </div>
         <div className="flex basis-1/4 bg-gray-50 flex-col p-4 space-y-6">
           <div className="font-bold text-lg">Order Summary</div>

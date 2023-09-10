@@ -1,4 +1,7 @@
 "use client";
+import BAST_PATH_API from "@/app/components/shared/BasePath";
+import { useAuth } from "@clerk/nextjs";
+import { ConsoleLogWriter } from "drizzle-orm";
 import {
   createContext,
   FC,
@@ -12,34 +15,136 @@ export const ctxCart = createContext<any>(null);
 
 const ContextWrapper: FC<{ children: ReactNode }> = ({ children }) => {
   const [quantity, setQuantity] = useState(0);
-  const cartInitializer = {
-    cart: [],
-  };
-  const [state, dispatch] = useReducer(cartReducer, cartInitializer);
-  useEffect(() => {
-    let cart = localStorage.getItem("cart-data") as string;
-    if (cart === null) {
-      localStorage.setItem("cart-data", JSON.stringify(state.cart));
+  const cartInitializer: any = [];
+  const [cartArray, setCartArray] = useState<any>(cartInitializer);
+  const { userId } = useAuth();
+
+  async function getIPAddress() {
+    let myIP = "";
+    const res = await fetch("https://api.ipify.org?format=json");
+    const data = await res.json();
+    return data.ip;
+  }
+
+  function getQuantityFromCart() {
+    let qty:number = 0;
+    console.log(cartArray.length)
+    if (cartArray.length !== 0 && cartArray[0]["cart-products"] !== null) {
+      cartArray.forEach((item: any) => {
+        qty = qty + item["cart-products"].quantity;
+      });
+    }
+    // setQuantity(qty);
+    // console.log("ctx qty", cartArray);
+    return qty;
+  }
+  async function getDataFromDB() {
+    const IP = await getIPAddress();
+    // console.log(IP)
+    let id;
+    if (userId) {
+      id = userId;
     } else {
-      cartInitializer.cart = JSON.parse(cart);
-      setQuantity(state.cart.length);
+      id = IP;
     }
-  });
-
-  useEffect(() => {
-    localStorage.setItem("cart-data", JSON.stringify(state.cart));
-    setQuantity(state.cart.length);
-  }, [state.cart]);
-
-  useEffect(() => {
-    if (state.cart.length !== 0) {
-      setQuantity((quantity) => (quantity = state.cart.length));
-      // console.log(quantity);
+    const response = await fetch(`${BAST_PATH_API}/api/cartfunc?clerkid=${id}`);
+    let dataToSave = await response.json();
+    // console.log("cart data", dataToSave);
+    if (dataToSave.cartAllData.length === 0) {
+      const response = await fetch(`${BAST_PATH_API}/api/cartfunc`, {
+        method: "POST",
+        body: JSON.stringify({
+          name: "Temp",
+          clerkid: id,
+          phone: "111-111-1111",
+          email: "temp@temp.com",
+        }),
+      });
+      if (response.status === 200) {
+        const resp = await fetch(`${BAST_PATH_API}/api/cartfunc?clerkid=${id}`);
+        dataToSave = await resp.json();
+      }
     }
-  }, [state.cart, quantity]);
+    setCartArray(dataToSave.cartAllData);
+    
+    let qty = 0;
+    if (
+      dataToSave.cartAllData.length !== 0 &&
+      dataToSave.cartAllData[0]["cart-products"] !== null
+     )
+      dataToSave.cartAllData.forEach((item: any) => {
+        qty = qty + item["cart-products"].quantity;
+      });    
+    setQuantity(qty);
+  }
+  async function dispatch(payload: string, data: any) {
+    if (payload === "addToCart") {
+      data.id = cartArray[0].users.id;
+      const response = await fetch(`${BAST_PATH_API}/api/cartfunc`, {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+      // console.log(await response.json());
+    }
+    if (payload === "removeFromCart") {
+      const response = await fetch(`${BAST_PATH_API}/api/cartfunc`, {
+        method: "DELETE",
+        body: JSON.stringify(data),
+      });
+      // console.log(await response.json());
+    }
+    if (payload === "updateCart") {
+      if (data.increase === false) {
+        data.quantity = data.quantity - 1;
+      } else {
+        data.quantity = data.quantity + 1;
+      }
+      const response = await fetch(`${BAST_PATH_API}/api/cartfunc`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+      });
+      // console.log(await response.json());
+    }
+
+    getDataFromDB();
+  }
+  useEffect(() => {
+    getDataFromDB();
+  }, []);
+
+  // const [state, dispatch] = useReducer(cartReducer, cartInitializer);
+  // useEffect(() => {
+  //   let cart = localStorage.getItem("cart-data") as string;
+  //   if (cart === null) {
+  //     localStorage.setItem("cart-data", JSON.stringify(state.cart));
+  //   } else {
+  //     cartInitializer.cart = JSON.parse(cart);
+  //     setQuantity(state.cart.length);
+  //   }
+  // });
+
+  // useEffect(() => {
+  //   localStorage.setItem("cart-data", JSON.stringify(state.cart));
+  //   setQuantity(state.cart.length);
+  // }, [state.cart]);
+
+  // useEffect(() => {
+  //   if (state.cart.length !== 0) {
+  //     setQuantity((quantity) => (quantity = state.cart.length));
+  //     // console.log(quantity);
+  //   }
+  // }, [state.cart, quantity]);
 
   return (
-    <ctxCart.Provider value={{ state, dispatch, quantity }}>
+    <ctxCart.Provider
+      value={{
+        cartArray,
+        dispatch,
+        quantity,
+        setQuantity,
+        getQuantityFromCart,
+      }}
+    >
       {children}
     </ctxCart.Provider>
   );
@@ -76,7 +181,7 @@ export function cartReducer(state: any, action: any) {
         (item: any) => item.productId !== responseData.productId
       );
       // console.log("found ", cartWithout);
-      
+
       return {
         cart: [...cartWithout, addInCartProduct],
       };
@@ -102,9 +207,9 @@ export function cartReducer(state: any, action: any) {
           break;
         }
       }
-    }    
+    }
     return {
-      cart: [...state.cart]
+      cart: [...state.cart],
     };
   }
 

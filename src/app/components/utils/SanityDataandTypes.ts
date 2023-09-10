@@ -30,6 +30,7 @@ export interface oneProductType {
     productcare: Array<string>,
     size: Array<string>,
     price: number,
+    cartid?: number|undefined,
 }
 
 export interface responseType {

@@ -6,6 +6,7 @@ import Wrapper from "./components/shared/Wrapper";
 import { ClerkProvider } from '@clerk/nextjs'
 import Footer from "./components/views/Footer";
 import { auth } from "@clerk/nextjs";
+import ContextWrapper from "@/context/context";
 
 const inter = Sora({
   subsets: ["latin"],
@@ -28,7 +29,9 @@ export default function RootLayout({
       <html lang="en">
         <body className={inter.className}>
           <Wrapper>
-            <Navbar userData={userId} />
+            <ContextWrapper>
+              <Navbar userData={userId} />
+            </ContextWrapper>
             {children}
           </Wrapper>
           <Footer />

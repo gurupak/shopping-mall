@@ -1,10 +1,12 @@
-import { auth } from "@clerk/nextjs";
+import ContextWrapper from "@/context/context";
+import CheckoutState from "../components/views/SubComponents/CheckoutState";
 
 const CheckoutPage = () => {
-    const { userId } = auth()
-    console.log(userId)
-  return <div>CheckoutPage</div>;
+  return (
+    <ContextWrapper>
+      <CheckoutState />
+    </ContextWrapper>
+  );
 };
 
 export default CheckoutPage;
-

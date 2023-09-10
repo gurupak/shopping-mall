@@ -10,10 +10,13 @@ import { BsCart2 } from "react-icons/bs";
 import { useContext } from "react";
 import { ctxCart } from "@/context/context";
 import toast, { Toaster } from "react-hot-toast";
+import { useAuth, useUser } from "@clerk/nextjs";
 
 const builder = ImageUrlBuilder(client);
 const Details: FC<{ productItem: oneProductType }> = ({ productItem }) => {
   const { state, dispatch } = useContext(ctxCart);
+  const { userId } = useAuth()
+  const { user } = useUser();
   // console.log(state)
 
   const makeImgUrl = (srcUrl: any): any => {
@@ -42,13 +45,16 @@ const Details: FC<{ productItem: oneProductType }> = ({ productItem }) => {
 
   const notifiction = () => toast.success(`${quantity} ${productItem.productName} added to cart`);
 
-  function handleAddToCart() {
+  function handleAddToCart() {    
     let dataToAdd = {
-      productId: productItem._id,
+      uuid: productItem._id,
       quantity: quantity,
+      price: productItem.price,
+      id: userId,
     };
     // console.log(productItem._id)
-    dispatch({ payload: "addToCart", data: dataToAdd });
+    dispatch("addToCart",dataToAdd);
+    // dispatch({ payload: "addToCart", data: dataToAdd });
     notifiction();
   }
   
