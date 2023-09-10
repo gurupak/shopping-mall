@@ -22,18 +22,20 @@ export async function POST(request: NextRequest) {
 
   const lineItemToSend = allData.message.filter((subItem: oneProductType) => {
     // console.log("sub", item);
-    return item.every((element: any) => {
+    return item.some((element: any) => {
       return subItem._id.includes(element["cart-products"].productUuid);
     });
   });
 
   let qtyitem = 0;
-  // console.log("line", lineItemToSend.length);
+  console.log("line", lineItemToSend);
   for (let index = 0; index < lineItemToSend.length; index++) {
     const element = lineItemToSend[index];
-    if (item[0]["cart-products"].productUuid === element._id) {
-      qtyitem = qtyitem + item[0]["cart-products"].quantity;
-    }
+    item.forEach((item: any) => {
+      if (item["cart-products"].productUuid === element._id) {
+        qtyitem = qtyitem + item["cart-products"].quantity;
+      }
+    });
     element.quantity = qtyitem;
   }
   function getQty(id: number | undefined) {
@@ -72,6 +74,7 @@ export async function POST(request: NextRequest) {
   //   },
   //   quantity: 1,
   // };
+  console.log(...transformedItem)
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
     line_items: [...transformedItem],
@@ -83,7 +86,7 @@ export async function POST(request: NextRequest) {
       "https://cdn.sanity.io/images/zmhdgih1/production/a6a38f6a1f31dafe5f3294a4384f865b7d25a344-370x394.png",
     },
   });
-  console.log("sess", session.id);
+  // console.log("sess", session.id);
   return NextResponse.json({ id: session.id });
   //   const transformedItem = {
   //     price_data: {

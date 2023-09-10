@@ -9,7 +9,7 @@ const PaymentSuccess = ({searchParams}:any) => {
   const paymentStatus = searchParams;
   const { userId } = useAuth();
   const router = useRouter()
-
+  let msg = "Thank you for your payment"
   async function getUserDBID(){
     let res = await fetch(`${BAST_PATH_API}/api/cartfunc?clerkid=${userId}`)
     let data = await res.json()    
@@ -27,11 +27,9 @@ const PaymentSuccess = ({searchParams}:any) => {
   if( paymentStatus.status === 'success'){
     getUserDBID();
   }else{
-
+    msg = "Your payment failed. Please try again from cart page."
   }
-  return (
-    <div>Payment failed</div>
-  )
+  return <div>{msg}</div>;
 }
 
 export default PaymentSuccess
