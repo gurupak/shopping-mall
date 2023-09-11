@@ -2,7 +2,6 @@
 import BAST_PATH_API from "@/app/components/shared/BasePath";
 import { getIPAddress } from "@/app/components/utils/helper";
 import { useAuth } from "@clerk/nextjs";
-import { ConsoleLogWriter } from "drizzle-orm";
 import {
   createContext,
   FC,

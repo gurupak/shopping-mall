@@ -5,15 +5,15 @@ import { useContext, useEffect} from "react";
 import { BsCart2 } from "react-icons/bs";
 
 const CartState = () => {
-  const { quantity, cartArray, setQuantity, getQuantityFromCart } =
-    useContext(ctxCart);
-  
-  useEffect(() => {
-    const qty:number = getQuantityFromCart();
-    // console.log("nav qty", qty);
-    setQuantity(qty);
-  }, [cartArray, setQuantity, quantity]);
-  
+  const { quantity, cartArray } = useContext(ctxCart);
+
+  //, setQuantity, getQuantityFromCart
+  // useEffect(() => {
+  //   const qty:number = getQuantityFromCart();
+  //   // console.log("nav qty", qty);
+  //   setQuantity(qty);
+  // }, [cartArray, setQuantity, quantity]);
+
   return (
     <Link href="/cart">
       <div className="flex-shrink-0 relative w-11 h-10 rounded-full bg-gray-300 items-center justify-center flex">
