@@ -1,5 +1,6 @@
 "use client";
 import BAST_PATH_API from "@/app/components/shared/BasePath";
+import { getIPAddress } from "@/app/components/utils/helper";
 import { useAuth } from "@clerk/nextjs";
 import { ConsoleLogWriter } from "drizzle-orm";
 import {
@@ -13,18 +14,13 @@ import {
 
 export const ctxCart = createContext<any>(null);
 
-const ContextWrapper: FC<{ children: ReactNode }> = ({ children }) => {
+const ContextWrapper: FC<{children: ReactNode }> = ({children }) => {
   const [quantity, setQuantity] = useState(0);
   const cartInitializer: any = [];
   const [cartArray, setCartArray] = useState<any>(cartInitializer);
   const { userId } = useAuth();
 
-  async function getIPAddress() {
-    let myIP = "";
-    const res = await fetch("https://api.ipify.org?format=json");
-    const data = await res.json();
-    return data.ip;
-  }
+
 
   function getQuantityFromCart() {
     let qty:number = 0;
@@ -75,7 +71,7 @@ const ContextWrapper: FC<{ children: ReactNode }> = ({ children }) => {
       dataToSave.cartAllData.forEach((item: any) => {
         qty = qty + item["cart-products"].quantity;
       });    
-    setQuantity(qty);
+    setQuantity(qty);    
   }
   async function dispatch(payload: string, data: any) {
     if (payload === "addToCart") {
@@ -141,7 +137,7 @@ const ContextWrapper: FC<{ children: ReactNode }> = ({ children }) => {
         cartArray,
         dispatch,
         quantity,
-        setQuantity,
+        setQuantity,       
         getQuantityFromCart,
       }}
     >

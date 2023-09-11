@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import BAST_PATH_API from "../components/shared/BasePath";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import { getIPAddress } from "../components/utils/helper";
 
 type userData = string | null | undefined;
 
@@ -15,12 +16,39 @@ async function SaveUserData(name: userData, email: any, phone: any, clerkid:any)
         clerkid: clerkid,
       };
 
-      console.log(data)
+      console.log('new data', data)
       const res = await fetch(`${BAST_PATH_API}/api/cartfunc`, {
         method: "POST",
         body: JSON.stringify(data),
       });
+      
+      // console.log('new', await res.json())
+      let insertId = await res.json();
+      if (insertId.message === "Record inserted"){
+        const IP = await getIPAddress();
+
+        let response = await fetch(
+          `${BAST_PATH_API}/api/cartfunc?clerkid=${IP}`
+        );
+        let id = await response.json();
+
+        if (id.cartAllData.length !== 0) {
+          // console.log("old id", id.cartAllData[0]['users'].id);
+          id = id.cartAllData[0]["users"].id;
+          response = await fetch(`${BAST_PATH_API}/api/cartfunc`, {
+            method: "PUT",
+            body: JSON.stringify({ clerkid: insertId.id, usrid: id }),
+          });
+          id = await response.json();
+
+          console.log("add", id);
+        }
+      }
+      
+
       return await res.json();
+
+
     } else {
         console.log('missing');
     }
@@ -38,7 +66,7 @@ const CompleteSignUp = () => {
     router.push('/')
   }, [user]);
 
-  return <div>Thank you for signing up. Please browser products in our Dine Mall.</div>;
+  return <div>Thank you for signing up. Please browse products in our Dine Mall.</div>;
 };
 
 export default CompleteSignUp;

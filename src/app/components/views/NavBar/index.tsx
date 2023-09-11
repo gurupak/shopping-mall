@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 import CartState from "../SubComponents/CartState";
 import { UserButton } from "@clerk/nextjs";
 
-const Navbar = ({ userData }: { userData: string | null }) => {
+const Navbar = ({ userData}: { userData: string | null}) => {
   const router = useRouter();
   // const qty = contextCart.cart.map()
   const [searchText, setSearchText] = useState("");

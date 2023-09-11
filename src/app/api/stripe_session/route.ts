@@ -27,9 +27,10 @@ export async function POST(request: NextRequest) {
     });
   });
 
-  let qtyitem = 0;
   console.log("line", lineItemToSend);
+  let qtyitem = 0;
   for (let index = 0; index < lineItemToSend.length; index++) {
+    qtyitem = 0;
     const element = lineItemToSend[index];
     item.forEach((item: any) => {
       if (item["cart-products"].productUuid === element._id) {

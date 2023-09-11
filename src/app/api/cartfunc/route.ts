@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   const url = await request.json();
-  console.log(url.name);
+  // console.log(url.name);
   // return NextResponse.json({ url }, { status: 200 });
   try {
     let userid: any;
@@ -111,6 +111,20 @@ export async function PUT(request: NextRequest) {
         .returning({ userid: cartproducts.userId });
       return NextResponse.json(
         { message: "Record updated", id: userid[0].userid },
+        { status: 200 }
+      );
+    }
+    if (url.clerkid && url.usrid) {
+      console.log("clerk");
+      userid = await db
+        .update(cartproducts)
+        .set({
+          userId: url.clerkid,
+        })
+        .where(eq(cartproducts.userId, url.usrid))
+        .returning({ userid: cartproducts.id });
+      return NextResponse.json(
+        { message: "Record updated", id: userid[0].userId },
         { status: 200 }
       );
     } else {
