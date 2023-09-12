@@ -20,7 +20,7 @@ const Navbar = ({ userData}: { userData: string | null}) => {
   const [searchText, setSearchText] = useState("");
   const [isNavbarOpen, setNavbarOpen] = useState<boolean>(false);
   const handleSearchKeyDown = (e: any) => {
-    console.log(e.key, e.keyCode);
+    // console.log(e.key, e.keyCode);
     if (e.key === "Enter" && e.keyCode === 13) {
       router.push(`/search/${searchText}`);
     }

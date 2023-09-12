@@ -12,6 +12,7 @@ import products from "../../../../../../sanity/products";
 import { loadStripe } from "@stripe/stripe-js";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
+import toast, { Toaster } from "react-hot-toast";
 
 const builder = ImageUrlBuilder(client);
 const makeImgUrl = (srcUrl: any): any => {
@@ -39,15 +40,28 @@ const CartChild = () => {
 
   const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
   const stripePromise = loadStripe(publishableKey as string);
+
   // console.log(JSON.stringify(cartArray));
   const createCheckOutSession = async () => {
+    // console.log(userId);
+    if (userId === null) {
+      router.push("/sign-in?redirect_url=/cart");
+      return;
+    }
     setLoading(true);
     const stripe: any = await stripePromise;
+    const notifiction = () => toast.error(`Please add products to cart first.`);
+    if (cartArray.length > 0 && cartArray[0]["cart-products"] === null) {
+      // console.log(cartArray);
+      notifiction();
+      setLoading(false);
+      return;
+    }
     const checkoutSession = await fetch("/api/stripe_session", {
       method: "POST",
       body: JSON.stringify(cartArray),
-    });
-    let id = await checkoutSession.json();
+    });    
+    let id = await checkoutSession.json();    
     const result = await stripe.redirectToCheckout({
       sessionId: id.id,
     });
@@ -207,6 +221,7 @@ const CartChild = () => {
 
   return (
     <div className="py-10 px-4 md:px-10">
+      <Toaster />
       <div className="py-6">
         <h1 className="font-bold text-2xl">Shopping Cart</h1>
       </div>
