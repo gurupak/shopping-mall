@@ -47,7 +47,7 @@ const ExpandNavbar: FC<{
                 {subItem.label}
               </Link>
             ))}
-        </div>
+        </div>        
       </li>
     </div>
   );

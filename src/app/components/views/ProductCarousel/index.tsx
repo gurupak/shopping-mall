@@ -46,8 +46,7 @@ const ProductCarousel: FC<{ ProductData: Array<oneProductType> }> = ({
           .map((item: oneProductType, index: number) => (
             <Card data={item} key={index} />
           ))}
-      </Carousel>
-      ;
+      </Carousel>      
       {/* <Swiper
         slidesPerView={1}
         spaceBetween={10}

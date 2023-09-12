@@ -107,6 +107,16 @@ const ContextWrapper: FC<{children: ReactNode }> = ({children }) => {
     getDataFromDB();
   }, []);
 
+  useEffect(() => {
+    let qty = 0;
+    if (cartArray.length !== 0 && cartArray[0]["cart-products"] !== null)
+      cartArray.forEach((item: any) => {
+        qty = qty + item["cart-products"].quantity;
+      });
+    setQuantity((quantity) => quantity = qty);  
+    // console.log(qty)
+  }, [cartArray]);
+
   // const [state, dispatch] = useReducer(cartReducer, cartInitializer);
   // useEffect(() => {
   //   let cart = localStorage.getItem("cart-data") as string;

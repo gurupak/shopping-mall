@@ -8,11 +8,12 @@ const CartState = () => {
   const { quantity, cartArray } = useContext(ctxCart);
 
   //, setQuantity, getQuantityFromCart
-  // useEffect(() => {
-  //   const qty:number = getQuantityFromCart();
-  //   // console.log("nav qty", qty);
-  //   setQuantity(qty);
-  // }, [cartArray, setQuantity, quantity]);
+  useEffect(() => {
+    // const qty:number = getQuantityFromCart();
+    // // console.log("nav qty", qty);
+    // setQuantity(qty);
+    console.log('in nav when cart change')
+  }, [cartArray, quantity]);
 
   return (
     <Link href="/cart">

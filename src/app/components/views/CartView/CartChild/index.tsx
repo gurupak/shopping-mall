@@ -9,6 +9,9 @@ import ImageUrlBuilder from "@sanity/image-url";
 import { client } from "../../../../../../sanity/lib/client";
 import Link from "next/link";
 import products from "../../../../../../sanity/products";
+import { loadStripe } from "@stripe/stripe-js";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
 
 const builder = ImageUrlBuilder(client);
 const makeImgUrl = (srcUrl: any): any => {
@@ -27,6 +30,32 @@ const CartChild = () => {
   const { cartArray, dispatch } = useContext(ctxCart);
   const [allProductsCart, setAllProductsCart] = useState<Array<any>>([]);
   const [totalPrice, setTotalPrice] = useState(0);
+
+  const router = useRouter();
+  //   const { status } = router.query;
+  const [loading, setLoading] = useState(false);
+  const { userId } = useAuth();
+  //   console.log(userId);
+
+  const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+  const stripePromise = loadStripe(publishableKey as string);
+  // console.log(JSON.stringify(cartArray));
+  const createCheckOutSession = async () => {
+    setLoading(true);
+    const stripe: any = await stripePromise;
+    const checkoutSession = await fetch("/api/stripe_session", {
+      method: "POST",
+      body: JSON.stringify(cartArray),
+    });
+    let id = await checkoutSession.json();
+    const result = await stripe.redirectToCheckout({
+      sessionId: id.id,
+    });
+    if (result.error) {
+      alert(result.error.message);
+    }
+    setLoading(false);
+  };
 
   // console.log(cartArray);
   useEffect(() => {
@@ -183,7 +212,7 @@ const CartChild = () => {
       </div>
       <div className="flex gap-6 flex-col lg:flex-row">
         <div className="flex flex-col gap-10 basis-3/4 ">
-          {allProductsCart.length > 0 ?
+          {allProductsCart.length > 0 ? (
             allProductsCart?.map((item: oneProductType, index: number) => (
               <div key={index} className="flex gap-6 flex-col sm:flex-row">
                 <div className="w-72">
@@ -251,7 +280,10 @@ const CartChild = () => {
                   </div>
                 </div>
               </div>
-            )): <div>Shopping Cart Empty</div>}
+            ))
+          ) : (
+            <div>Shopping Cart Empty</div>
+          )}
         </div>
         <div className="flex basis-1/4 bg-gray-50 flex-col p-4 space-y-6">
           <div className="font-bold text-lg">Order Summary</div>
@@ -264,11 +296,17 @@ const CartChild = () => {
             <p>${totalPrice}</p>
           </div>
           <div>
-            <Link href={"/checkout"}>
-              <button className="bg-black text-primaryWhite w-full px-4 py-2">
-                Process to Checkout
-              </button>
-            </Link>
+            <button
+              disabled={loading}
+              className="bg-black text-primaryWhite w-full px-4 py-2"
+              onClick={createCheckOutSession}
+            >
+              {loading ? (
+                <span className="loading loading-bars loading-md"></span>
+              ) : (
+                "Process to Checkout"
+              )}
+            </button>
           </div>
         </div>
       </div>

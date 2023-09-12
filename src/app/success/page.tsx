@@ -20,7 +20,7 @@ const PaymentSuccess = ({searchParams}:any) => {
         body: JSON.stringify({userid: id})
     })
     data = await res.json()
-    console.log(data)
+    // console.log(data)
     router.push('/')
   }
   
@@ -29,7 +29,7 @@ const PaymentSuccess = ({searchParams}:any) => {
   }else{
     msg = "Your payment failed. Please try again from cart page."
   }
-  return <div>{msg}</div>;
+  return <div className='h-[50vh] flex items-center justify-center text-xl font-bold'>{msg}</div>;
 }
 
 export default PaymentSuccess
